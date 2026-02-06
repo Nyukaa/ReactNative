@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text, ScrollView } from "react-native";
 import Constants from "expo-constants";
 import theme from "../theme";
 import { Link } from "react-router-native";
@@ -23,12 +23,26 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   return (
     <View style={styles.container}>
-      <Link to="/" component={Pressable} style={styles.tab}>
-        <Text style={styles.tabText}>Repositories</Text>
-      </Link>
-      <Link to="/signin" component={Pressable} style={styles.tab}>
-        <Text style={styles.tabText}>Sign in</Text>
-      </Link>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Link to="/" component={Pressable} style={styles.tab}>
+          <Text style={styles.tabText}>Repositories</Text>
+        </Link>
+        <Link to="/signin" component={Pressable} style={styles.tab}>
+          <Text style={styles.tabText}>Sign in</Text>
+        </Link>
+        <Link to="/profile" component={Pressable} style={styles.tab}>
+          <Text style={styles.tabText}>Profile</Text>
+        </Link>
+        <Link to="/settings" component={Pressable} style={styles.tab}>
+          <Text style={styles.tabText}>Settings</Text>
+        </Link>
+        <Link to="/notifications" component={Pressable} style={styles.tab}>
+          <Text style={styles.tabText}>Notifications</Text>
+        </Link>
+        <Link to="/help" component={Pressable} style={styles.tab}>
+          <Text style={styles.tabText}>Help</Text>
+        </Link>
+      </ScrollView>
     </View>
   );
 };
