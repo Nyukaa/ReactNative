@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import theme from "../theme";
 import Stats from "./Stats";
+import Text from "./Text";
 const styles = StyleSheet.create({
   container: {
     padding: 15,
