@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "eslint ./src/**/*.{js,jsx} App.js --no-error-on-unmatched-pattern"
+    "lint": "eslint ./src/**/*.{js,jsx} App.js --no-error-on-unmatched-pattern",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@apollo/client": "^3.14.0",
@@ -30,7 +31,8 @@
     "babel-preset-expo": "^54.0.10",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-native": "^5.0.0"
+    "eslint-plugin-react-native": "^5.0.0",
+    "husky": "^8.0.0"
   },
   "private": true
 }
