@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet } from "react-native";
 import theme from "../theme";
 //formats numbers like 1.5k instead of 1500
+
 const formatCount = (count) => {
+  if (count == null) return "0";
   return count >= 1000 ? (count / 1000).toFixed(1) + "k" : count.toString();
 };
 
