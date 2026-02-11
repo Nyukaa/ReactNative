@@ -1,17 +1,21 @@
-//hook for signing in a user, using the AUTHENTICATE mutation to get an access token
-//Хук useSignIn отправляет GraphQL мутацию и возвращает данные, включая accessToken.
-import { useMutation } from "@apollo/client";
-import { AUTHENTICATE } from "../graphql/mutations"; // твоя мутация authenticate
+import { useMutation, useApolloClient } from "@apollo/client";
+import { AUTHENTICATE } from "../graphql/mutations";
+import useAuthStorage from "./useAuthStorage";
 
 const useSignIn = () => {
   const [mutate, result] = useMutation(AUTHENTICATE);
+  const authStorage = useAuthStorage();
+  const apolloClient = useApolloClient();
 
   const signIn = async ({ username, password }) => {
     const { data } = await mutate({
-      variables: {
-        credentials: { username, password },
-      },
+      variables: { credentials: { username, password } },
     });
+
+    const accessToken = data.authenticate.accessToken;
+    await authStorage.setAccessToken(accessToken);
+    await apolloClient.resetStore();
+
     return data;
   };
 

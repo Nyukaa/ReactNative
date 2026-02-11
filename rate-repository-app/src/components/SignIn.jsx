@@ -2,6 +2,7 @@ import { View, TextInput, Pressable, StyleSheet } from "react-native";
 import { useFormik } from "formik";
 import Text from "./Text";
 import * as yup from "yup";
+import { useState, useEffect } from "react";
 
 import useSignIn from "../hooks/useSignIn";
 import AuthStorage from "../utils/authStorage";
@@ -15,10 +16,9 @@ const validationSchema = yup.object().shape({
     .min(5, "Password must be at least 5 characters")
     .required("Password is required"),
 });
+
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
+  container: { padding: 20 },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -31,15 +31,22 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
     alignItems: "center",
+    marginTop: 10,
   },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
+  buttonText: { color: "white", fontWeight: "bold" },
 });
 
 const SignIn = () => {
   const [signIn] = useSignIn();
+  const [userToken, setUserToken] = useState(null);
+  // проверяем токен при загрузке компонента
+  useEffect(() => {
+    const loadToken = async () => {
+      const token = await authStorage.getAccessToken();
+      if (token) setUserToken(token);
+    };
+    loadToken();
+  }, []);
 
   const onSubmit = async (values) => {
     try {
@@ -48,6 +55,7 @@ const SignIn = () => {
 
       // сохраняем токен
       await authStorage.setAccessToken(token);
+      setUserToken(token); // обновляем состояние
 
       console.log("User signed in, token saved:", token);
     } catch (e) {
@@ -55,15 +63,31 @@ const SignIn = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await authStorage.removeAccessToken();
+    setUserToken(null); // обновляем UI
+    console.log("User signed out");
+  };
+
   const formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-    },
-    validationSchema, // added validation schema
+    initialValues: { username: "", password: "" },
+    validationSchema,
     onSubmit,
   });
 
+  // если пользователь вошёл
+  if (userToken) {
+    return (
+      <View style={styles.container}>
+        <Text>Вы вошли в систему!</Text>
+        <Pressable style={styles.button} onPress={handleSignOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  // если пользователь не вошёл — показываем форму
   return (
     <View style={styles.container}>
       <TextInput
@@ -71,7 +95,7 @@ const SignIn = () => {
         placeholder="Username"
         value={formik.values.username}
         onChangeText={formik.handleChange("username")}
-        onBlur={formik.handleBlur("username")} // to trigger validation on blur
+        onBlur={formik.handleBlur("username")}
       />
       {formik.touched.username && formik.errors.username && (
         <Text style={{ color: "red" }}>{formik.errors.username}</Text>
@@ -80,7 +104,7 @@ const SignIn = () => {
       <TextInput
         style={styles.input}
         placeholder="Password"
-        secureTextEntry // hides the password input
+        secureTextEntry
         value={formik.values.password}
         onChangeText={formik.handleChange("password")}
         onBlur={formik.handleBlur("password")}
