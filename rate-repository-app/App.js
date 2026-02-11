@@ -4,10 +4,7 @@ import apolloClient from "./src/apolloClient";
 import { NativeRouter } from "react-router-native";
 import Constants from "expo-constants";
 import Main from "./src/components/Main";
-// const apolloClient = new ApolloClient({
-//   uri: "http://localhost:4000/graphql", // пока заглушка
-//   cache: new InMemoryCache(),
-// });
+
 export default function App() {
   console.log(Constants.expoConfig);
   return (

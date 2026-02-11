@@ -2,9 +2,14 @@ import { View, TextInput, Pressable, StyleSheet } from "react-native";
 import { useFormik } from "formik";
 import Text from "./Text";
 import * as yup from "yup";
+
+import useSignIn from "../hooks/useSignIn";
+import AuthStorage from "../utils/authStorage";
+
+const authStorage = new AuthStorage();
+
 const validationSchema = yup.object().shape({
   username: yup.string().required("Username is required"),
-
   password: yup
     .string()
     .min(5, "Password must be at least 5 characters")
@@ -34,8 +39,20 @@ const styles = StyleSheet.create({
 });
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values);
+  const [signIn] = useSignIn();
+
+  const onSubmit = async (values) => {
+    try {
+      const data = await signIn(values);
+      const token = data.authenticate.accessToken;
+
+      // сохраняем токен
+      await authStorage.setAccessToken(token);
+
+      console.log("User signed in, token saved:", token);
+    } catch (e) {
+      console.error("Sign in failed:", e);
+    }
   };
 
   const formik = useFormik({
@@ -59,6 +76,7 @@ const SignIn = () => {
       {formik.touched.username && formik.errors.username && (
         <Text style={{ color: "red" }}>{formik.errors.username}</Text>
       )}
+
       <TextInput
         style={styles.input}
         placeholder="Password"
