@@ -1,4 +1,5 @@
-import { FlatList, View, StyleSheet, Text } from "react-native";
+import { FlatList, View, StyleSheet, Text, Pressable } from "react-native";
+import { useNavigate } from "react-router-native";
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
 
@@ -19,17 +20,26 @@ const RepositoryList = () => {
   return <RepositoryListContainer repositories={repositories} />;
 };
 
-//for testing purposes and to separate concerns
+//separated for testing purposes
 export const RepositoryListContainer = ({ repositories }) => {
-  const repositoryNodes = repositories
-    ? repositories.edges.map((edge) => edge.node)
-    : [];
+  const navigate = useNavigate();
+  console.log("repositories", repositories);
+  //Extract graphql nodes from edges array
+  // const repositoryNodes = repositories
+  //   ? repositories.edges.map((edge) => edge.node)
+  //   : [];
+  // repositories is already mapped in useRepositories, so we can directly use it here without mapping again
+  const repositoryNodes = repositories || [];
 
   return (
     <FlatList
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
-      renderItem={({ item }) => <RepositoryItem repository={item} />}
+      renderItem={({ item }) => (
+        <Pressable onPress={() => navigate(`/repository/${item.id}`)}>
+          <RepositoryItem repository={item} />
+        </Pressable>
+      )}
       keyExtractor={(item) => item.id}
     />
   );

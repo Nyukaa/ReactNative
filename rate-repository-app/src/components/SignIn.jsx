@@ -2,8 +2,14 @@ import { View, TextInput, Pressable, StyleSheet } from "react-native";
 import { useFormik } from "formik";
 import Text from "./Text";
 import * as yup from "yup";
+import { useState, useEffect } from "react";
 
-export const validationSchema = yup.object().shape({
+import useSignIn from "../hooks/useSignIn";
+import AuthStorage from "../utils/authStorage";
+
+const authStorage = new AuthStorage();
+
+const validationSchema = yup.object().shape({
   username: yup.string().required("Username is required"),
   password: yup
     .string()
@@ -27,48 +33,89 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
+  buttonText: { color: "white", fontWeight: "bold" },
 });
 
-export const SignInContainer = ({ onSubmit }) => {
+const SignIn = () => {
+  const [signIn] = useSignIn();
+  const [userToken, setUserToken] = useState(null);
+  // check if token exists on component mount
+  useEffect(() => {
+    const loadToken = async () => {
+      const token = await authStorage.getAccessToken();
+      if (token) setUserToken(token);
+    };
+    loadToken();
+  }, []);
+
+  const onSubmit = async (values) => {
+    try {
+      const data = await signIn(values);
+      const token = data.authenticate.accessToken;
+
+      // save token to storage and update state
+      await authStorage.setAccessToken(token);
+      setUserToken(token);
+
+      console.log("User signed in, token saved:", token);
+    } catch (e) {
+      console.error("Sign in failed:", e);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await authStorage.removeAccessToken();
+    setUserToken(null); // Ui update to reflect sign out
+    console.log("User signed out");
+  };
+
   const formik = useFormik({
     initialValues: { username: "", password: "" },
     validationSchema,
     onSubmit,
   });
 
+  if (userToken) {
+    return (
+      <View style={styles.container}>
+        <Text>You signed in!</Text>
+        <Pressable style={styles.button} onPress={handleSignOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <TextInput
-        testID="usernameInput"
+        style={styles.input}
         placeholder="Username"
         value={formik.values.username}
         onChangeText={formik.handleChange("username")}
+        onBlur={formik.handleBlur("username")}
       />
+      {formik.touched.username && formik.errors.username && (
+        <Text style={{ color: "red" }}>{formik.errors.username}</Text>
+      )}
 
       <TextInput
-        testID="passwordInput"
+        style={styles.input}
         placeholder="Password"
         secureTextEntry
         value={formik.values.password}
         onChangeText={formik.handleChange("password")}
+        onBlur={formik.handleBlur("password")}
       />
+      {formik.touched.password && formik.errors.password && (
+        <Text style={{ color: "red" }}>{formik.errors.password}</Text>
+      )}
 
-      <Pressable testID="submitButton" onPress={formik.handleSubmit}>
-        <Text>Sign in</Text>
+      <Pressable style={styles.button} onPress={formik.handleSubmit}>
+        <Text style={styles.buttonText}>Sign in</Text>
       </Pressable>
     </View>
   );
-};
-import useSignIn from "../hooks/useSignIn";
-
-const SignIn = () => {
-  const [signIn] = useSignIn();
-
-  const onSubmit = async (values) => {
-    await signIn(values);
-  };
-
-  return <SignInContainer onSubmit={onSubmit} />;
 };
 
 export default SignIn;

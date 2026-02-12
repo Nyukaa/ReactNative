@@ -1,5 +1,5 @@
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import { SignInContainer } from "./SignIn";
+import { SignInContainer } from "./SignInCont";
 
 describe("SignInContainer", () => {
   it("calls onSubmit function with correct arguments when form is submitted", async () => {

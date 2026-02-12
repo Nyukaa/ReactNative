@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-native";
 import AppBar from "./AppBar";
 import RepositoryList from "./RepositoryList";
 import SignIn from "./SignIn";
+import SingleRepositoryView from "./SingleRepositoryView";
 const styles = StyleSheet.create({
   container: {
     // marginTop: Constants.statusBarHeight, // moved to AppBar
@@ -18,6 +19,7 @@ const Main = () => {
       <Routes>
         <Route path="/" element={<RepositoryList />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/repository/:id" element={<SingleRepositoryView />} />
         {/* Redirect any unknown routes to the main repository list */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
