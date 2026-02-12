@@ -4,11 +4,23 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "test": "echo \"No tests yet\"",
+    "test": "jest",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "eslint ./src/**/*.{js,jsx} App.js --no-error-on-unmatched-pattern"
+  },
+  "setupFilesAfterEnv": [
+    "<rootDir>/setupTests.js"
+  ],
+  "jest": {
+    "preset": "jest-expo",
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-router-native)"
+    ]
   },
   "dependencies": {
     "@apollo/client": "^3.14.0",
@@ -30,11 +42,17 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/eslint-parser": "^7.28.6",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
     "babel-preset-expo": "^54.0.10",
     "eslint": "^8.57.1",
+    "eslint-plugin-jest": "^29.13.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-native": "^5.0.0",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "jest": "^29.7.0",
+    "jest-expo": "^54.0.17",
+    "react-test-renderer": "^19.1.0"
   },
   "private": true
 }
