@@ -1,7 +1,32 @@
-import { FlatList, View, StyleSheet, Text, Pressable } from "react-native";
+import { useState } from "react";
+import { Text } from "react-native";
+import useRepositories from "../hooks/useRepositories";
+
+const RepositoryList = () => {
+  //  order state to manage sorting of repositories
+  const [order, setOrder] = useState({
+    orderBy: "CREATED_AT", //what field to sort by
+    orderDirection: "DESC", //how to sort (descending or ascending)
+  });
+
+  const { repositories, loading, error } = useRepositories(order);
+
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
+
+  return (
+    <RepositoryListContainer
+      repositories={repositories}
+      order={order}
+      setOrder={setOrder}
+    />
+  );
+};
+
+import { FlatList, View, StyleSheet, Pressable } from "react-native";
 import { useNavigate } from "react-router-native";
 import RepositoryItem from "./RepositoryItem";
-import useRepositories from "../hooks/useRepositories";
+import { Picker } from "@react-native-picker/picker"; // for dropdown menu
 
 const styles = StyleSheet.create({
   separator: {
@@ -11,38 +36,47 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-const RepositoryList = () => {
-  const { repositories, loading, error } = useRepositories();
-
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
-
-  return <RepositoryListContainer repositories={repositories} />;
-};
-
-//separated for testing purposes
-export const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories, order, setOrder }) => {
   const navigate = useNavigate();
-  console.log("repositories", repositories);
-  //Extract graphql nodes from edges array
-  // const repositoryNodes = repositories
-  //   ? repositories.edges.map((edge) => edge.node)
-  //   : [];
-  // repositories is already mapped in useRepositories, so we can directly use it here without mapping again
-  const repositoryNodes = repositories || [];
+  //    to update the order state based on user selection
+  const handleOrderChange = (value) => {
+    if (value === "LATEST")
+      setOrder({ orderBy: "CREATED_AT", orderDirection: "DESC" });
+
+    if (value === "HIGHEST")
+      setOrder({ orderBy: "RATING_AVERAGE", orderDirection: "DESC" });
+
+    if (value === "LOWEST")
+      setOrder({ orderBy: "RATING_AVERAGE", orderDirection: "ASC" });
+  };
 
   return (
     <FlatList
-      data={repositoryNodes}
+      data={repositories}
+      keyExtractor={(item) => item.id}
       ItemSeparatorComponent={ItemSeparator}
+      ListHeaderComponent={
+        <Picker
+          selectedValue={
+            order.orderBy === "CREATED_AT"
+              ? "LATEST"
+              : order.orderDirection === "DESC"
+              ? "HIGHEST"
+              : "LOWEST"
+          }
+          onValueChange={handleOrderChange}
+        >
+          <Picker.Item label="Latest repositories" value="LATEST" />
+          <Picker.Item label="Highest rated repositories" value="HIGHEST" />
+          <Picker.Item label="Lowest rated repositories" value="LOWEST" />
+        </Picker>
+      }
       renderItem={({ item }) => (
         <Pressable onPress={() => navigate(`/repository/${item.id}`)}>
           <RepositoryItem repository={item} />
         </Pressable>
       )}
-      keyExtractor={(item) => item.id}
     />
   );
 };
-
 export default RepositoryList;
