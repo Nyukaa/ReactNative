@@ -4,10 +4,11 @@ import { GET_REPOSITORIES } from "../graphql/queries";
 const useRepositories = ({
   orderBy = "CREATED_AT", //for sorting repositories by creation date
   orderDirection = "DESC",
+  searchKeyword = "",
 } = {}) => {
   const { data, loading, error, refetch } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: "cache-and-network",
-    variables: { orderBy, orderDirection },
+    variables: { orderBy, orderDirection, searchKeyword },
   });
 
   //  edges -> node
