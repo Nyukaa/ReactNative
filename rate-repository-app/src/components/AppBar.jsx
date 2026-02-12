@@ -43,7 +43,11 @@ const AppBar = () => {
             <Text style={styles.tabText}>Create a review</Text>
           </Link>
         )}
-
+        {!data?.me && (
+          <Link to="/signup" component={Pressable} style={styles.tab}>
+            <Text style={styles.tabText}>Sign up</Text>
+          </Link>
+        )}
         {data?.me ? (
           <Pressable onPress={handleSignOut} style={styles.tab}>
             <Text style={styles.tabText}>Sign out</Text>

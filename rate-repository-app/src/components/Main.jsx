@@ -5,6 +5,7 @@ import RepositoryList from "./RepositoryList";
 import SignIn from "./SignIn";
 import CreateReview from "./CreateReview";
 import SingleRepositoryView from "./SingleRepositoryView";
+import SignUp from "./SignUp";
 const styles = StyleSheet.create({
   container: {
     // marginTop: Constants.statusBarHeight, // moved to AppBar
@@ -22,6 +23,7 @@ const Main = () => {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/repository/:id" element={<SingleRepositoryView />} />
         <Route path="/create-review" element={<CreateReview />} />
+        <Route path="/signup" element={<SignUp />} />
         {/* Redirect any unknown routes to the main repository list */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
