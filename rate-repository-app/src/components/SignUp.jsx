@@ -10,7 +10,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
-    console.log("Submitted values:", values);
+    //console.log("Submitted values:", values);
     try {
       const { username, password } = values;
       await createUser({ variables: { username, password } });
