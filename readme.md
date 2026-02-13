@@ -8,7 +8,7 @@
 A **junior-friendly mobile application** that lists GitHub repositories, supports authentication, and demonstrates **clean state management** with **Apollo Client**.  
 The app consumes a local GraphQL API (`rate-repository-api`) to fetch data, manage reviews, and securely store access tokens.
 
-🌐 [**API Repo**](https://github.com/Nyukaa/ReactNative/rate-repository-api) 💻 [**GitHub**](https://github.com/Nyukaa/ReactNative/rate-repository-app) 👩‍💻 [**Author**](https://github.com/Nyukaa/)
+🌐 [**API Repo**](https://github.com/Nyukaa/ReactNative/tree/main/rate-repository-api) 💻 [**GitHub**](https://github.com/Nyukaa/ReactNative/tree/main/rate-repository-app) 👩‍💻 [**Author**](https://github.com/Nyukaa/)
 
 ---
 
@@ -28,9 +28,9 @@ The app demonstrates **mobile app architecture**, Apollo Client integration, and
 
 ## 📸 Screenshots / App Preview
 
-| Repository List                                                       | Single Repository                                                          | Sign Up                                                         | My Reviews                                                            |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------- |
-| <img src="./screenshots/main.png" alt="Repository List" width="150"/> | <img src="./screenshots/onepage.png" alt="Single Repository" width="150"/> | <img src="./screenshots/SignUp.png" alt="Sign Up" width="150"/> | <img src="./screenshots/MyReviews.png" alt="My Reviews" width="150"/> |
+| Repository List                                                       | Single Repository                                                          | Sign Up                                                         | My Reviews                                                        |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------- |
+| <img src="./screenshots/main.png" alt="Repository List" width="150"/> | <img src="./screenshots/onepage.png" alt="Single Repository" width="150"/> | <img src="./screenshots/SignUp.png" alt="Sign Up" width="150"/> | <img src="./screenshots/myrev.png" alt="My Reviews" width="150"/> |
 
 ## 🧰 Technologies Used
 
@@ -94,9 +94,7 @@ The app demonstrates **mobile app architecture**, Apollo Client integration, and
 
 ## 🧪 Testing
 
-- **Repository List Tests (Exercise 10.17):** Ensures repository items render correctly with full name, description, language, forks, stars, rating, and review count.
-- **Sign-In Form Tests (Exercise 10.18):** Ensures submitting valid credentials calls the `onSubmit` handler with correct values.
-- Tests focus on **pure components**; Apollo Client and AsyncStorage are mocked/not directly tested.
+Unit and integration tests for key components using React Native Testing Library ensure that repository lists render correctly and that sign-in forms submit valid credentials, focusing on pure components without directly testing Apollo Client or AsyncStorage.
 
 ---
 
@@ -113,7 +111,7 @@ The app demonstrates **mobile app architecture**, Apollo Client integration, and
 
 ⭐ This project reflects a focus on **mobile-first design, type-safe data handling, and clean architecture for junior-friendly learning**.
 
----
+<!---
 
 ## ⚙️ Operations (Backend Highlights)
 
@@ -156,3 +154,4 @@ The app demonstrates **mobile app architecture**, Apollo Client integration, and
   ```
   APOLLO_URI=http://localhost:4000 npm run start
   ```
+  -->
