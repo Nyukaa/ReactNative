@@ -4,11 +4,15 @@ export const GET_REPOSITORIES = gql`
     $orderBy: AllRepositoriesOrderBy
     $orderDirection: OrderDirection
     $searchKeyword: String
+    $first: Int
+    $after: String
   ) {
     repositories(
       orderBy: $orderBy
       orderDirection: $orderDirection
       searchKeyword: $searchKeyword
+      first: $first
+      after: $after
     ) {
       edges {
         node {
@@ -22,12 +26,18 @@ export const GET_REPOSITORIES = gql`
           reviewCount
           ownerAvatarUrl
         }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
       }
     }
   }
 `;
+// included implement pagination for reviews,  when we load the repository page
 export const GET_REPOSITORY = gql`
-  query repository($id: ID!) {
+  query repository($id: ID!, $first: Int, $after: String) {
     repository(id: $id) {
       id
       fullName
@@ -39,7 +49,8 @@ export const GET_REPOSITORY = gql`
       reviewCount
       ownerAvatarUrl
       url
-      reviews {
+
+      reviews(first: $first, after: $after) {
         edges {
           node {
             id
@@ -51,19 +62,18 @@ export const GET_REPOSITORY = gql`
               username
             }
           }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
         }
       }
     }
   }
 `;
-// export const ME = gql`
-//   query {
-//     me {
-//       id
-//       username
-//     }
-//   }
-// `;
+
+//me includes reviews, but we want to make it optional, so we can use the same query in different places without fetching reviews when we don't need them
 
 export const GET_CURRENT_USER = gql`
   query getCurrentUser($includeReviews: Boolean = false) {

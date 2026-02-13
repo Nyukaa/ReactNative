@@ -14,11 +14,15 @@ const RepositoryList = () => {
     orderDirection: "DESC", //how to sort (descending or ascending)
   });
 
-  const { repositories, loading, error } = useRepositories({
+  const { repositories, loading, error, fetchMore } = useRepositories({
     ...order,
     searchKeyword: debouncedSearchKeyword,
+    first: 8,
   });
-
+  //  fetching more repositories when the user reaches the end of the list
+  const onEndReach = () => {
+    fetchMore();
+  };
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error.message}</Text>;
 
@@ -26,6 +30,7 @@ const RepositoryList = () => {
     <RepositoryListContainerWithNavigate
       repositories={repositories}
       order={order}
+      onEndReach={onEndReach}
       setOrder={setOrder}
       searchKeyword={searchKeyword}
       setSearchKeyword={setSearchKeyword}
@@ -98,9 +103,14 @@ export class RepositoryListContainer extends React.Component {
     const { repositories } = this.props;
     const navigate = this.props.navigate;
 
+    //  extract the node from the edges, before it was done in the useRepositories hook,
+    // but now we need the edges for pagination, so we do it here instead
+    const repositoryNodes = repositories
+      ? repositories.edges.map((edge) => edge.node)
+      : [];
     return (
       <FlatList
-        data={repositories}
+        data={repositoryNodes}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={this.renderHeader}

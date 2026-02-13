@@ -1,32 +1,37 @@
-import { View, FlatList, ActivityIndicator } from "react-native";
+import { View, FlatList, ActivityIndicator, Text } from "react-native";
 import { useParams } from "react-router-native";
-import { useQuery, gql } from "@apollo/client";
+import useReviews from "../hooks/useReviews";
 import RepositoryItem from "../components/RepositoryItem";
 import ReviewItem from "../components/ReviewItem";
-import { GET_REPOSITORY } from "../graphql/queries";
 
 const SingleRepositoryView = () => {
   const { id } = useParams();
-  const { data, loading, error } = useQuery(GET_REPOSITORY, {
-    variables: { id },
-  });
 
+  const { repository, reviews, loading, error, fetchMore } = useReviews({
+    repositoryId: id,
+    first: 2,
+  });
   if (loading) return <ActivityIndicator size="large" />;
   if (error) return <Text>Error loading repository</Text>;
-
-  const repository = data.repository;
-  const reviews = repository.reviews.edges.map((edge) => edge.node);
-
+  console.log("reviews.length:", reviews?.edges.length);
+  //const repository = data.repository;
+  //const reviews = repository.reviews.edges.map((edge) => edge.node);
+  // Map edges to nodes for FlatList
+  const reviewNodes = reviews?.edges.map((edge) => edge.node) ?? [];
   return (
-    <FlatList
-      data={reviews}
-      renderItem={({ item }) => <ReviewItem review={item} />}
-      keyExtractor={(item) => item.id}
-      ListHeaderComponent={() => (
-        <RepositoryItem repository={repository} showGitHubButton={true} />
-      )}
-      ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-    />
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={reviewNodes}
+        renderItem={({ item }) => <ReviewItem review={item} />}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={() => (
+          <RepositoryItem repository={repository} showGitHubButton={true} />
+        )}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        onEndReached={fetchMore}
+        onEndReachedThreshold={0.2}
+      />
+    </View>
   );
 };
 

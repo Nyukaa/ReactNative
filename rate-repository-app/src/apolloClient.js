@@ -1,8 +1,9 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { relayStylePagination } from "@apollo/client/utilities";
 import Constants from "expo-constants";
-//Берём токен из AsyncStorage через AuthStorage.
-//Добавляем его в Authorization для всех запросов.
+//get token AsyncStorage through AuthStorage.
+//add it to Authorization for every request if it exists
 
 const createApolloClient = (authStorage) => {
   const httpLink = createHttpLink({
@@ -19,10 +20,23 @@ const createApolloClient = (authStorage) => {
       },
     };
   });
-
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          repositories: relayStylePagination(),
+        },
+      },
+      Repository: {
+        fields: {
+          reviews: relayStylePagination(), // add pagination for reviews
+        },
+      },
+    },
+  });
   return new ApolloClient({
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
+    cache, //new InMemoryCache(), now we use the same pagination for all queries
   });
 };
 
